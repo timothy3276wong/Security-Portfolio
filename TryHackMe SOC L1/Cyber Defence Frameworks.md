@@ -4,9 +4,83 @@ Frameworks that describe how attacks unfold and how to defend against them: the 
 
 **Rooms:** Pyramid of Pain · Cyber Kill Chain · Unified Kill Chain · MITRE · Summit · Eviction
 
-> This file covers **Eviction**, the module's final challenge. The other rooms are in `Cyber Defence Frameworks Notes.txt`.
+**Skills covered:** IOC types & their value · attack lifecycle models · MITRE ATT&CK / D3FEND · purple-team detection · ATT&CK Navigator · mapping TTPs to detections
 
-**Skills covered:** MITRE ATT&CK Navigator · threat-group profiling · mapping TTPs to detections
+---
+
+## Pyramid of Pain
+
+The pyramid ranks indicators by **how much pain it causes the attacker when you detect and block them**. Lower levels are easy to block but just as easy for the attacker to change.
+
+```
+            ▲  TTPs                 ← tough: attacker has to change behaviour
+           ▲▲  Tools                ← challenging
+          ▲▲▲  Network/Host Artifacts ← annoying
+         ▲▲▲▲  Domain Names          ← simple
+        ▲▲▲▲▲  IP Addresses          ← easy
+       ▲▲▲▲▲▲  Hash Values           ← trivial
+```
+
+| Level | Notes |
+|---|---|
+| **Hash values** | MD5 → SHA-1 → SHA-2 (increasing security). Identifies an exact malicious file, but changing one byte gives a new hash, so it's the weakest IOC |
+| **IP addresses** | Block, drop or deny inbound requests from the IP. Attackers rotate IPs easily (or use fast flux) |
+| **Domain names** | Slightly harder to change (registration costs time and money). Attackers rely on users trusting familiar-looking domains (lookalikes, punycode) |
+| **Host artifacts** | Traces on the system: registry values, suspicious process execution, dropped files, patterns |
+| **Network artifacts** | User-agent strings, C2 info, URI patterns. Detect with PCAPs in Wireshark/TShark or IDS logs |
+| **Tools** | Malicious docs, backdoors, custom .exes, payloads. Detecting the tool forces the attacker to retool |
+| **TTPs** | Tactics, Techniques & Procedures, i.e. the whole ATT&CK matrix. Detect *behaviour* and the attacker has to change how they operate |
+
+In the lab I analyzed an Any.Run malware report to pull IOCs at each level.
+
+---
+
+## Cyber Kill Chain
+
+Lockheed Martin's 7-stage model of an attack. Break any link and the later stages fail.
+
+1. **Reconnaissance:** research and planning. OSINT is the big one. *Passive* (no contact with the target) vs. *active* (scanning, probing)
+2. **Weaponization:** packaging the exploit and malware into a deliverable payload (e.g. a macro doc)
+3. **Delivery:** getting it into the environment (phishing email, USB, watering hole)
+4. **Exploitation:** the payload executes and exploits a vulnerability
+5. **Installation:** a persistent backdoor so the attacker can come back
+6. **Command & Control (C2):** the compromised host talks to the attacker's external server
+7. **Actions on Objectives:** the end goal with full access: exfiltration, encryption, destruction
+
+---
+
+## Unified Kill Chain
+
+A more complete model (18 phases) built for **threat modelling**, i.e. working out risk and which attacks you're exposed to. Unlike the Cyber Kill Chain, it covers what happens *after* the initial breach.
+
+| Stage | Phases |
+|---|---|
+| **In** (initial foothold) | Reconnaissance, Weaponization, Delivery, Social Engineering, Exploitation, Persistence, Defense Evasion, Command & Control |
+| **Through** (network propagation) | Pivoting, Discovery, Privilege Escalation, Execution, Credential Access, Lateral Movement |
+| **Out** (actions on objectives) | Collection, Exfiltration, Impact, Objectives |
+
+---
+
+## MITRE
+
+MITRE is a not-for-profit that does R&D across many domains "to solve problems for a safer world." Its security projects:
+
+- **ATT&CK:** knowledge base of real-world adversary tactics and techniques (Tactic → Technique → Sub-technique, e.g. `T1059.001` PowerShell). Useful for both red and blue teams, and probably the most useful single resource in this module
+- **D3FEND:** the defensive counterpart, a knowledge base of countermeasures mapped to the techniques they counter
+- **ATLAS:** threats to AI and ML systems
+- Others include CAR (analytics) and Engage (adversary engagement / deception)
+
+---
+
+## Summit
+
+A **purple-team** lab: a simulated attacker runs malware samples, and you configure defences to detect and prevent each one, moving up the Pyramid of Pain:
+
+1. **Block the hash:** works until the attacker recompiles
+2. **Block the IP:** works until they switch servers
+3. → domain → host/network artifacts → tools → **TTPs**
+
+Each round the attacker changes the cheap indicator, which shows in practice why higher-level detections hold up longer.
 
 ---
 
