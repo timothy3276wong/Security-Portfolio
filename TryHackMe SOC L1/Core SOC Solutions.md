@@ -4,9 +4,7 @@ The main tools a SOC runs on: EDR on the endpoints, a SIEM to centralize and cor
 
 **Rooms:** Introduction to EDR · Introduction to SIEM · Splunk: The Basics · Elastic Stack: The Basics · Introduction to SOAR
 
-> This file covers the two intro rooms. Splunk, Elastic and SOAR are in `Core SOC Solutions Notes.txt`.
-
-**Skills covered:** EDR architecture & telemetry · AV vs. EDR · EDR response actions · log sources · SIEM normalization & correlation · detection rules · alert investigation
+**Skills covered:** EDR architecture & telemetry · AV vs. EDR · EDR response actions · log sources · SIEM normalization & correlation · detection rules · alert investigation · Splunk SPL · Elastic/Kibana KQL & dashboards · SOAR playbooks
 
 ---
 
@@ -129,3 +127,75 @@ If Log Source = WinEventLog AND EventID = 4688
 3. **True positive** → dig deeper, contact the asset owner, isolate the host, block the malicious IPs.
 
 The lab is a simulated SIEM dashboard: trigger the suspicious activity, pivot from the alert to the process, user and host, read which rule keyword matched, and record a TP/FP verdict.
+
+---
+
+## Splunk: The Basics
+
+Splunk is one of the leading SIEMs. It ingests any kind of machine data and breaks it into searchable **events**.
+
+**Architecture:**
+| Component | Role |
+|---|---|
+| **Forwarder** | Lightweight agent on the host. Collects logs from local sources and sends them to the indexer |
+| **Indexer** | Parses incoming data into events, stores them, and makes them searchable |
+| **Search Head** | The UI where you query the indexes with **SPL** (Search Processing Language) and build visualizations |
+
+**First SPL query: count VPN events from outside France**
+```spl
+index=VPN_Logs
+| spath
+| search Source_Country!="France"
+| stats count
+```
+- `index=` picks the data set
+- `spath` extracts fields from JSON-structured events
+- `search` filters (`!=` excludes)
+- `stats count` aggregates the results
+
+Reference: [Splunk Search Tutorial](https://docs.splunk.com/Documentation/Splunk/8.1.2/SearchTutorial/NavigatingSplunk)
+
+---
+
+## Elastic Stack: The Basics
+
+The **ELK stack** isn't a SIEM on its own, but SOC teams use it like one for searching and visualizing data. It's a set of open-source components:
+
+| Component | Role |
+|---|---|
+| **Beats** | Host-based agents that ship data (Winlogbeat, Filebeat…) |
+| **Logstash** | Data processing pipeline: **input → filter → output** |
+| **Elasticsearch** | Search and analytics engine that stores and indexes the data (RESTful API) |
+| **Kibana** | Web UI for searching, visualizing and building dashboards |
+
+```
+Beats → Logstash → Elasticsearch → Kibana
+```
+
+**KQL (Kibana Query Language)** supports free-text and field-based search, with `*` as a wildcard:
+```
+source_ip : 192.168.1.*
+username : "jsmith" and action : "failed"
+```
+
+**What I did in the lab:** filtered events by time range, found the user responsible for the most traffic, built visualizations, and combined visualizations and saved searches into a custom dashboard.
+
+---
+
+## Introduction to SOAR
+
+**SOAR (Security Orchestration, Automation and Response)** ties all of a SOC's tools together behind one interface, so analysts aren't switching between a SIEM, EDR, firewall, threat intel and ticketing tools.
+
+- **Orchestration:** connects the tools so they can share data and trigger each other
+- **Automation:** repetitive steps (enrichment lookups, blocking an IP) run without an analyst
+- **Response:** **playbooks** define how each alert type is handled end to end
+
+**Example phishing playbook:**
+```
+Alert: user reported phish
+→ extract sender, URLs, attachment hashes
+→ auto-lookup in VirusTotal / Talos
+→ malicious? → delete the email from all mailboxes, block sender + domain, open ticket for L2
+→ clean?     → close as FP, notify the user
+```
+This is how SOAR lowers the false positive workload and MTTR from the SOC Metrics room.
