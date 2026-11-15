@@ -4,9 +4,7 @@ This module is about reading what actually happened on the wire. Logs tell you a
 
 **Rooms:** Network Traffic Basics · Wireshark: The Basics · Wireshark: Packet Operations · Wireshark: Traffic Analysis · NetworkMiner
 
-> This file covers the first four rooms. NetworkMiner is still to come.
-
-**Skills covered:** TCP/IP layers · north-south vs. east-west traffic · logs vs. PCAP vs. NetFlow · Wireshark UI & packet dissection · display filter syntax · statistics · scan & ARP spoofing detection · host identification · DNS/ICMP tunnelling · FTP/HTTP analysis · TLS decryption · credential hunting
+**Skills covered:** TCP/IP layers · north-south vs. east-west traffic · logs vs. PCAP vs. NetFlow · Wireshark UI & packet dissection · display filter syntax · statistics · scan & ARP spoofing detection · host identification · DNS/ICMP tunnelling · FTP/HTTP analysis · TLS decryption · credential hunting · NetworkMiner host & file extraction
 
 ---
 
@@ -209,3 +207,39 @@ iptables -A INPUT -i eth0 -s 10.121.70.151/32 -j DROP
 ```
 
 **Takeaway:** Wireshark answers *what exactly happened*, but you need a hypothesis first. The usual workflow is **Statistics → narrow with filters → Follow Stream → extract IOCs → act.**
+
+---
+
+## NetworkMiner
+
+NetworkMiner is an open-source **network forensic analysis tool** (Windows, with a Linux/Mono build). Where Wireshark shows you packets, NetworkMiner shows you **things**: hosts, sessions, files, images, credentials. It's built for quickly getting an overview of a PCAP.
+
+### NetworkMiner vs. Wireshark
+| | NetworkMiner | Wireshark |
+|---|---|---|
+| Focus | **Host-centric** overview, artefact extraction | **Packet-centric** deep inspection |
+| Strength | Pulls out files, images, creds, OS fingerprints automatically | Filters, protocol dissection, stream reconstruction |
+| Filtering | Basic keyword search | Powerful display filters |
+| Live capture | Possible, but mainly used on PCAPs | Yes |
+| Best for | First look: "who's in here, what got transferred?" | Then dig into the specific packets |
+
+**Workflow:** open the PCAP in NetworkMiner to triage → pivot into Wireshark for detail.
+
+### Tabs
+| Tab | What it gives you |
+|---|---|
+| **Hosts** | Every host with IP, MAC + vendor, hostname, **OS fingerprint** (passive, from TTL/TCP options), open ports, sent/received bytes |
+| **Sessions** | TCP sessions: client ↔ server, ports, start time |
+| **DNS** | Queries and answers |
+| **Credentials** | Cleartext creds and hashes (HTTP, FTP, SMTP, Kerberos/NTLM), with the host and protocol |
+| **Files** | Files reassembled from the traffic (HTTP, SMB, FTP, SMTP…) with source, size and hash. Saved to an `AssembledFiles` folder |
+| **Images** | Thumbnails of transferred images |
+| **Parameters** | Parameters pulled from requests (form fields, URL query values) |
+| **Keywords** | Search the capture for strings or byte patterns |
+| **Messages** | Email and chat content (e.g. SMTP bodies) |
+| **Anomalies** | Unusual events NetworkMiner flagged while parsing (e.g. malformed or unexpected traffic) |
+
+### Versions
+The room compares an older build (**1.6**) with a newer one (**2.x**). Some features only exist in one: e.g. frame-level processing and per-host MAC detail differ between versions. Be aware that the version changes what you can see.
+
+**Takeaway:** NetworkMiner answers *what's in this capture* in minutes (hosts, OSes, transferred files, leaked credentials). Wireshark answers *exactly how it happened*. Using both is faster than either alone.
