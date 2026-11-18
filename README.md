@@ -1,57 +1,42 @@
 # Security Portfolio
 
-Hi, I'm **Timothy Wong**, a Computer Engineering student at Queen's University working toward a career in security operations (SOC). This repo documents my hands-on cybersecurity learning: write-ups, lab notes, and what I took away from each exercise.
+I'm **Timothy Wong**, a Computer Engineering student at Queen's University working toward a career in security operations (SOC). This repo holds my write-ups and notes from hands-on security training.
 
 [LinkedIn](https://www.linkedin.com/in/timothy-wong-13891a340/) · timothy.wong@queensu.ca
 
----
-
 ## Contents
 
-| Folder | What it covers | Status |
-| --- | --- | --- |
-| [`OverTheWire Bandit`](./OverTheWire%20Bandit) | Linux security wargame write-ups, levels 0–32 | Completed |
-| `Homelab` | Isolated virtual lab for practicing network scanning and detection | In progress |
-| `TryHackMe SOC Level 1` | Notes from the SOC analyst learning path | In progress |
+| Folder | What's inside |
+| --- | --- |
+| [`OverTheWire Bandit`](./OverTheWire%20Bandit) | Write-up of the Bandit Linux wargame, levels 0–32: method for each level, no passwords |
+| [`TryHackMe SOC L1`](./TryHackMe%20SOC%20L1) | Notes for the TryHackMe SOC Level 1 path, one file per module |
 
----
+### TryHackMe SOC Level 1 modules
 
-## OverTheWire Bandit
-
-[Bandit](https://overthewire.org/wargames/bandit/) is a beginner Linux wargame where each level hides the password to the next behind a security concept. I completed all levels from 0 to 32.
-
-**Skills practiced**
-- **Linux command line:** file discovery, permissions, text processing (`find`, `grep`, `sort`, `uniq`, `strings`, `base64`, `tr`, `xxd`)
-- **Networking:** SSH key authentication, port scanning with `nmap`, connecting to services with `netcat` and `openssl s_client`
-- **Privilege and misconfiguration abuse:** setuid binaries, scheduled `cron` jobs, restricted-shell escapes
-- **Scripting:** Bash scripts to automate brute-force and enumeration tasks
-- **Git:** digging through commit history, branches, and tags for leaked secrets
-
-**Write-up format**
-
-Each level's write-up follows the same structure:
-1. **Goal:** what the level asks for
-2. **Concept:** the security idea behind it
-3. **Approach:** the commands I used and why they work
-4. **Takeaway:** what this teaches about real-world systems
-
-> In line with OverTheWire's rules, these write-ups explain the method but do **not** include level passwords.
-
----
+1. Blue Team Introduction
+2. SOC Team Internals
+3. Core SOC Solutions: EDR, SIEM, Splunk, Elastic, SOAR
+4. Cyber Defence Frameworks: Pyramid of Pain, kill chains, MITRE ATT&CK
+5. Phishing Analysis
+6. Network Traffic Analysis: Wireshark, NetworkMiner
+7. Network Security Monitoring: detection, IDS, Snort
+8. Web Security Monitoring
+9. Windows Security Monitoring
+10. Linux Security Monitoring
+11. Malware Concepts for SOC
+12. Threat Analysis Tools
+13. SIEM Triage for SOC
+14. Capstone Challenges: Tempest, Boogeyman 1–3
 
 ## Certifications & Training
 
-- **ISC2 Certified in Cybersecurity (CC):** security principles, access control, network security, security operations, incident response
-- **TryHackMe SOC Level 1:** in progress
+- **ISC2 Certified in Cybersecurity (CC)**
+- **TryHackMe SOC Level 1**
+
+## Tools
+
+`Linux` · `Bash` · `Git` · `Wireshark` · `Splunk` · `Elastic/Kibana` · `Snort` · `Sysmon` · `Nmap` · `Python` · `C`
 
 ---
 
-## Tools & Skills
-
-`Linux` · `Bash` · `SSH` · `Nmap` · `netcat` · `Git` · `Python` · `C`
-
----
-
-## Disclaimer
-
-Everything in this repository was done in legal, purpose-built training environments (wargames, CTF platforms, and my own isolated lab). Nothing here is intended for use against systems I don't own or have permission to test.
+*All work was done in legal training environments (wargames and CTF platforms). Nothing here is intended for use against systems I don't own or have permission to test.*
